@@ -21,7 +21,7 @@ jupyter notebook
 
 ## What's Included
 
-✅ **Real Survey Data** - 34 students from Karachi schools
+✅ **Real Survey Data** - 30+ students from Karachi schools
 ✅ **4 Analysis Notebooks** - Demographics, study habits, wellbeing
 ✅ **Helper Scripts** - Data loading & cleaning utilities
 ✅ **Organized Structure** - Folders for data, notebooks, outputs
