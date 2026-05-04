@@ -14,8 +14,18 @@ cd "f:\Project 1.0\Khi-Edu-Analytics"
 # 3. Start Jupyter
 jupyter notebook
 
-# 4. Run notebooks in order: 01 → 02 → 03 → 04
+# 4. Run notebooks in order: 01 → 02 → 03 → 04 → 05 → 06
 ```
+
+---
+
+## 📊 Dataset Overview
+
+**366 Cleaned Survey Responses** from Karachi schools
+- Raw survey responses: 1,024
+- After data cleaning: 366 valid responses
+- Removed: 658 incomplete/invalid entries (64% of raw data)
+- **Data Quality:** High-quality, validated responses ready for analysis
 
 ---
 
