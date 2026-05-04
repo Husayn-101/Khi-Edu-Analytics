@@ -21,8 +21,8 @@ jupyter notebook
 
 ## What's Included
 
-✅ **Real Survey Data** - 30+ students from Karachi schools
-✅ **4 Analysis Notebooks** - Demographics, study habits, wellbeing
+✅ **Real Survey Data** - 366 cleaned student responses from Karachi
+✅ **6 Analysis Notebooks** - Demographics, study habits, wellbeing, executive summary, correlations
 ✅ **Helper Scripts** - Data loading & cleaning utilities
 ✅ **Organized Structure** - Folders for data, notebooks, outputs
 ✅ **Complete Setup** - Everything ready to analyze
@@ -34,14 +34,16 @@ jupyter notebook
 ```
 Khi-Edu-Analytics/
 ├── data/                                    # Data files
-│   ├── Karachi Edu Analytics Survey .csv   # Your survey data (34 responses)
+│   ├── Karachi Edu Analytics Survey .csv   # Survey data (366 cleaned responses)
 │   ├── raw/                                # Raw data backups
 │   └── cleaned/                            # Cleaned data exports
 ├── notebooks/                              # Jupyter analysis notebooks
 │   ├── 01_data_loading_cleaning.ipynb      # Load & explore ← START HERE
 │   ├── 02_demographics_analysis.ipynb      # Age, gender, grades
 │   ├── 03_study_habits_analysis.ipynb      # Study methods & subjects
-│   └── 04_wellbeing_analysis.ipynb         # Marginalization & substance use
+│   ├── 04_wellbeing_analysis.ipynb         # Marginalization & substance use
+│   ├── 05_executive_summary.ipynb          # All findings in one place
+│   └── 06_marginalization_substance_analysis.ipynb  # Correlation analysis
 ├── scripts/                                # Python helper functions
 │   └── helpers.py                          # Reusable utilities
 ├── report/                                 # Export final reports here
@@ -57,7 +59,8 @@ Khi-Edu-Analytics/
 **File:** `data/Karachi Edu Analytics Survey .csv`
 
 **What it contains:**
-- 34 student responses from Karachi
+- 366 cleaned student responses from Karachi
+- Data cleaned: removed invalid/incomplete entries from 1,024 raw responses
 - Age, gender, grade/class level
 - Study hours per day, preferred study methods
 - Most challenging subjects
@@ -106,6 +109,21 @@ Have you ever used tobacco, alcohol, or other substances?
 - Substance use prevalence
 - Cross-analysis: Gender vs Marginalization
 - Study hours vs Substance use patterns
+
+### **05_executive_summary.ipynb**
+**What:** Complete analysis summary in one notebook
+- Key findings dashboard
+- All demographics at a glance
+- Study habits overview
+- Wellbeing metrics
+- Recommendations based on findings
+
+### **06_marginalization_substance_analysis.ipynb**
+**What:** Deep correlation analysis
+- Statistical tests (Chi-square analysis)
+- Marginalization vs Substance Use correlation
+- Bar charts and heatmaps
+- Risk analysis and insights
 
 ---
 
@@ -175,10 +193,12 @@ get_study_habits_summary(df_clean)
 1. Run `02_demographics_analysis.ipynb`
 2. Run `03_study_habits_analysis.ipynb`
 3. Run `04_wellbeing_analysis.ipynb`
-4. Note interesting findings
+4. Run `05_executive_summary.ipynb` for overview
+5. Run `06_marginalization_substance_analysis.ipynb` for deep insights
+6. Note interesting findings
 
 ### Session 3: Visualize & Export
-1. Save important charts to `visuals/` folder
+1. Save important charts from `visuals/` folder
 2. Create a summary report
 3. Export key insights to `report/` folder
 
@@ -198,12 +218,13 @@ get_study_habits_summary(df_clean)
 
 ---
 
-## Creating New Analysis
+## Creating Custom Analysis
 
 Add new notebooks to explore:
-- `05_cross_tabulation_analysis.ipynb` - Relationships between variables
-- `06_statistical_tests.ipynb` - Test survey hypotheses
-- `07_custom_visualizations.ipynb` - Create specific charts
+- Geographic analysis - Map schools and student locations
+- Time series - Track changes over multiple survey waves
+- Predictive models - Forecast wellbeing outcomes
+- Custom correlations - Explore specific relationships
 
 ---
 
@@ -220,12 +241,12 @@ Add new notebooks to explore:
 
 ## Next Steps
 
-✓ Run **01_data_loading_cleaning.ipynb** first
-✓ Explore the survey data
-✓ Run analysis notebooks 2-4
-✓ Create visualizations
-✓ Export findings
+✓ Start with **01_data_loading_cleaning.ipynb**
+✓ Run analysis notebooks 02-04
+✓ View executive summary in **05_executive_summary.ipynb**
+✓ Deep dive with **06_marginalization_substance_analysis.ipynb**
+✓ Create custom visualizations and reports
 
-**You're ready!** 🎉
+**Dataset:** 366 cleaned responses | **Status:** Ready for analysis 🎉
 
 
