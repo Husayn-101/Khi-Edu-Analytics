@@ -1,262 +1,151 @@
-# Khi-Edu-Analytics 📊
+# Khi-Edu-Analytics
 
-Karachi education student survey analysis with complete data pipeline and visualization notebooks!
+Karachi student survey analysis with a privacy-first ETL flow, reusable Python helpers, and notebook-based reporting.
 
-## Quick Start (30 seconds)
+## Overview
 
-```bash
-# 1. Activate your environment
-G:\MyPythonEnvs\env\Scripts\activate
+This repository is a small analytics project, not a warehouse-scale data engineering platform. It is organized to show:
 
-# 2. Go to project folder
-cd "f:\Project 1.0\Khi-Edu-Analytics"
+- structured raw-to-cleaned-to-public data handling
+- a warehouse that can run locally with SQLite for development or in Postgres in the cloud
+- change-detected refreshes from the source CSV
+- reproducible analysis notebooks
+- a privacy-safe public export workflow
+- presentation-ready charts and findings
 
-# 3. Start Jupyter
-jupyter notebook
+## Architecture
 
-# 4. Run notebooks in order: 01 → 02 → 03 → 04 → 05 → 06
+```mermaid
+flowchart LR
+    A[Raw survey CSV] --> B[scripts/helpers.py]
+	B --> C[Cleaned analysis frame]
+	C --> D[data/warehouse SQLite or Postgres]
+	C --> E[data/cleaned/public export]
+	C --> F[notebooks/ exploration]
+	F --> G[visuals/ charts]
+	G --> H[README and report]
 ```
 
----
+## Quick Start
 
-## 📊 Dataset Overview
+```bash
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python scripts/pipeline.py
+python -m unittest discover -s tests
+jupyter notebook
+```
 
-**366 Cleaned Survey Responses** from Karachi schools
-- Raw survey responses: 1,024
-- After data cleaning: 366 valid responses
-- Removed: 658 incomplete/invalid entries (64% of raw data)
-- **Data Quality:** High-quality, validated responses ready for analysis
+Use the notebooks for analysis, but prefer the cloud pipeline when you want a repeatable public export. The GitHub Actions workflow runs the ETL on a schedule against Supabase/Postgres, so your laptop does not need to stay on.
 
----
+For local development only, you can still run:
 
-## What's Included
+```bash
+python scripts/pipeline.py --watch --interval 30
+```
 
-✅ **Real Survey Data** - 366 cleaned student responses from Karachi
-✅ **6 Analysis Notebooks** - Demographics, study habits, wellbeing, executive summary, correlations
-✅ **Helper Scripts** - Data loading & cleaning utilities
-✅ **Organized Structure** - Folders for data, notebooks, outputs
-✅ **Complete Setup** - Everything ready to analyze
+To write into Postgres instead of local SQLite, create a `.env` file from [`.env.example`](.env.example) and set:
 
----
+```bash
+PIPELINE_TARGET=postgres
+DATABASE_URL=postgresql://username:password@host:5432/database_name
+```
+
+To test the Supabase or Postgres connection after creating `.env`, run:
+
+```bash
+python scripts/test_connection.py
+```
+
+## Repository Scope
+
+This project includes:
+
+- [scripts/helpers.py](scripts/helpers.py) for loading, cleaning, privacy checks, and summaries
+- [scripts/pipeline.py](scripts/pipeline.py) for the ETL pipeline, local SQLite mode, and optional Postgres mode
+- [scripts/pipeline.py](scripts/pipeline.py) for the ETL pipeline, local SQLite mode, and optional Postgres mode
+- [scripts/test_connection.py](scripts/test_connection.py) for a quick Postgres connection check
+- [.env.example](.env.example) for the required environment variables
+- [.github/workflows/cloud-etl.yml](.github/workflows/cloud-etl.yml) for the scheduled cloud ETL job
+- [sql/](sql) for warehouse SQL or schema files if you add them
+- [notebooks/](notebooks) for exploration and final narrative analysis
+- [visuals/](visuals) for saved figures
+- [tests/](tests) for helper validation
+- [.github/workflows/ci.yml](.github/workflows/ci.yml) for basic automated checks
+
+## Privacy and Safety
+
+This dataset is sensitive because it concerns students and includes marginalization and substance-use questions. The public repository should never contain direct identifiers or fields that can reasonably identify a respondent.
+
+The local workflow is:
+
+1. Keep the raw CSV on your machine.
+2. Load it with `load_survey_data(...)`.
+3. Create a reduced export with `prepare_public_survey_data(...)`.
+4. Call `validate_public_survey_data(...)` before saving or sharing.
+
+The repository now ignores local caches, notebook checkpoints, virtual environments, and generated outputs under `data/`.
+
+## Data Summary
+
+The current cleaned dataset contains 366 responses. The raw export originally contained 1,024 responses, with incomplete or invalid entries removed during cleaning.
+
+The survey covers:
+
+- demographics such as age, gender, and grade/class
+- study habits and subject difficulty
+- extracurricular participation
+- marginalization and discrimination responses
+- substance-use responses
+
+## Recommended Flow
+
+1. Push to GitHub and let [.github/workflows/cloud-etl.yml](.github/workflows/cloud-etl.yml) run the ETL in the cloud.
+2. Use [scripts/pipeline.py](scripts/pipeline.py) locally only when you are developing or testing.
+3. Open [notebooks/01_data_loading_cleaning.ipynb](notebooks/01_data_loading_cleaning.ipynb) to inspect the cleaning logic.
+4. Use the analysis notebooks for demographics, study habits, wellbeing, and final summary work.
+5. Keep final charts in [visuals/](visuals) and summarize conclusions in the executive notebook.
+
+## Results and Conclusions
+
+The project is strongest as a university or junior-analyst portfolio piece when the focus is on:
+
+- transparent cleaning decisions
+- a clear privacy boundary between local and public data
+- concise charts with readable labels
+- a short executive summary that states the main findings and limitations
+
+It is not yet a database-backed production pipeline, so it should be presented as a reproducible analytics project rather than a complete data platform.
 
 ## Project Structure
 
 ```
 Khi-Edu-Analytics/
-├── data/                                    # Data files
-│   ├── Karachi Edu Analytics Survey .csv   # Survey data (366 cleaned responses)
-│   ├── raw/                                # Raw data backups
-│   └── cleaned/                            # Cleaned data exports
-├── notebooks/                              # Jupyter analysis notebooks
-│   ├── 01_data_loading_cleaning.ipynb      # Load & explore ← START HERE
-│   ├── 02_demographics_analysis.ipynb      # Age, gender, grades
-│   ├── 03_study_habits_analysis.ipynb      # Study methods & subjects
-│   ├── 04_wellbeing_analysis.ipynb         # Marginalization & substance use
-│   ├── 05_executive_summary.ipynb          # All findings in one place
-│   └── 06_marginalization_substance_analysis.ipynb  # Correlation analysis
-├── scripts/                                # Python helper functions
-│   └── helpers.py                          # Reusable utilities
-├── report/                                 # Export final reports here
-├── visuals/                                # Export charts here
-├── requirements.txt                        # Python dependencies
-└── README.md                               # This file
+├── data/
+│   ├── raw/
+│   └── cleaned/
+├── notebooks/
+├── report/
+├── scripts/
+├── sql/
+├── data/
+│   ├── warehouse/
+│   └── state/
+├── tests/
+├── visuals/
+├── .env.example
+├── CONTRIBUTING.md
+├── requirements.txt
+└── README.md
 ```
 
----
+## Environment Notes
 
-## Survey Dataset Explained
+If installation fails on a new machine, create a fresh virtual environment and reinstall from `requirements.txt`. The repo assumes Python 3.12 for CI, but the code should work on modern Python 3.11+ environments with the listed packages.
 
-**File:** `data/Karachi Edu Analytics Survey .csv`
+## Contribution Notes
 
-**What it contains:**
-- 366 cleaned student responses from Karachi
-- Data cleaned: removed invalid/incomplete entries from 1,024 raw responses
-- Age, gender, grade/class level
-- Study hours per day, preferred study methods
-- Most challenging subjects
-- Extracurricular activities
-- Marginalization/discrimination experiences
-- Substance use information
-
-**Survey Columns:**
-```
-Timestamp, Age, Grade/Class, Gender,
-Average hours spent studying per day, Preferred study method,
-Subject(s) you find most challenging, Extra-curricular activities,
-Do you feel marginalized or discriminated against,
-Have you ever used tobacco, alcohol, or other substances?
-```
-
----
-
-## Analysis Notebooks (Run in Order)
-
-### **01_data_loading_cleaning.ipynb** ← Start Here
-**What:** Load survey data and explore structure
-- Load the CSV file
-- Show data shape and columns
-- Check for missing values
-- Display sample rows
-- Basic statistics
-
-### **02_demographics_analysis.ipynb**
-**What:** Student demographics analysis
-- Age distribution (histogram, box plot)
-- Gender breakdown (pie chart)
-- Grade/Class distribution
-- Age by gender analysis
-
-### **03_study_habits_analysis.ipynb**
-**What:** Study patterns and subjects
-- Daily study hours distribution
-- Preferred study methods (bar chart)
-- Most challenging subjects analysis
-- Extracurricular activities breakdown
-
-### **04_wellbeing_analysis.ipynb**
-**What:** Student wellbeing concerns
-- Marginalization/discrimination experiences
-- Substance use prevalence
-- Cross-analysis: Gender vs Marginalization
-- Study hours vs Substance use patterns
-
-### **05_executive_summary.ipynb**
-**What:** Complete analysis summary in one notebook
-- Key findings dashboard
-- All demographics at a glance
-- Study habits overview
-- Wellbeing metrics
-- Recommendations based on findings
-
-### **06_marginalization_substance_analysis.ipynb**
-**What:** Deep correlation analysis
-- Statistical tests (Chi-square analysis)
-- Marginalization vs Substance Use correlation
-- Bar charts and heatmaps
-- Risk analysis and insights
-
----
-
-## Your Python Setup Explained
-
-### Virtual Environment (`G:\MyPythonEnvs\env`)
-✓ Isolated Python installation just for this project
-✓ Prevents conflicts with other projects
-✓ Has its own package versions
-
-### Packages You Have
-| Package | Purpose |
-|---------|---------|
-| `pandas` | Work with data tables |
-| `numpy` | Math & numerical operations |
-| `matplotlib` | Create charts & plots |
-| `seaborn` | Pretty statistical visualizations |
-| `jupyter` | Interactive notebooks (what you're using) |
-| `geopandas` | Geographic/location data |
-| `folium` | Interactive maps |
-| `scikit-learn` | Machine learning |
-| `ydata-profiling` | Auto-generate data reports |
-| Other libs | Excel, PDF, web data support |
-
-### How to Use
-```bash
-# Activate environment
-G:\MyPythonEnvs\env\Scripts\activate
-
-# Once activated, you can run:
-python scripts/helpers.py          # Run helper functions
-jupyter notebook                   # Start Jupyter (create/edit notebooks)
-pip install new_package            # Add more packages
-```
-
----
-
-## Using Helper Functions
-
-The `scripts/helpers.py` file contains reusable functions:
-
-```python
-# In your notebook
-import sys
-sys.path.insert(0, '../scripts')
-from helpers import load_survey_data, clean_survey_data, get_demographics_summary
-
-# Load data
-df = load_survey_data()
-df_clean = clean_survey_data(df)
-
-# Get summaries
-get_demographics_summary(df_clean)
-get_study_habits_summary(df_clean)
-```
-
----
-
-## Recommended Workflow
-
-### Session 1: Explore
-1. Run `01_data_loading_cleaning.ipynb`
-2. Understand the survey questions and data
-3. Check data quality
-
-### Session 2: Analysis
-1. Run `02_demographics_analysis.ipynb`
-2. Run `03_study_habits_analysis.ipynb`
-3. Run `04_wellbeing_analysis.ipynb`
-4. Run `05_executive_summary.ipynb` for overview
-5. Run `06_marginalization_substance_analysis.ipynb` for deep insights
-6. Note interesting findings
-
-### Session 3: Visualize & Export
-1. Save important charts from `visuals/` folder
-2. Create a summary report
-3. Export key insights to `report/` folder
-
-### Session 4: Share
-1. Create presentation with findings
-2. Share reports with stakeholders
-
----
-
-## Adding New Survey Data
-
-1. **Collect survey responses** using Google Forms or similar
-2. **Export as CSV** with same column names
-3. **Save to** `data/your_survey_name.csv`
-4. **Update notebook 01** to load your new file
-5. **Run all notebooks** and they'll analyze your new data!
-
----
-
-## Creating Custom Analysis
-
-Add new notebooks to explore:
-- Geographic analysis - Map schools and student locations
-- Time series - Track changes over multiple survey waves
-- Predictive models - Forecast wellbeing outcomes
-- Custom correlations - Explore specific relationships
-
----
-
-## Troubleshooting
-
-| Problem | Solution |
-|---------|----------|
-| "ModuleNotFoundError: pandas" | Activate environment first: `G:\MyPythonEnvs\env\Scripts\activate` |
-| "Jupyter not installed" | Run: `pip install jupyter` |
-| Import errors in notebooks | Add this to notebook top: `import sys; sys.path.insert(0, '../scripts')` |
-| Data won't load | Check file path and column names match exactly |
-
----
-
-## Next Steps
-
-✓ Start with **01_data_loading_cleaning.ipynb**
-✓ Run analysis notebooks 02-04
-✓ View executive summary in **05_executive_summary.ipynb**
-✓ Deep dive with **06_marginalization_substance_analysis.ipynb**
-✓ Create custom visualizations and reports
-
-**Dataset:** 366 cleaned responses | **Status:** Ready for analysis 🎉
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the privacy rules and validation commands used in this repository.
 
 
